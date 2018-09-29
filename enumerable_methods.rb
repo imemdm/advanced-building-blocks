@@ -92,19 +92,10 @@ module Enumerable
     result
   end
 
-  def my_inject(*args)
-    memo = 0
-    has_memo = false
-    unless args.empty?
-      memo = args[0]
-      has_memo = true
-    else
-      memo = self[0]
-    end
-  
-    self.my_each_with_index do |el, id|
-      if !has_memo && id == 0
-        next
+  def my_inject(memo = nil)  
+    self.my_each do |el|
+      if memo.nil?
+        memo = 0
       end
       memo = yield(memo, el)
     end
@@ -112,8 +103,11 @@ module Enumerable
   end
 end
 
-double = Proc.new { |n| n * 2 }
+def multiply_els arr
+  arr.my_inject(1) do |sum, el|
+    sum * el
+  end
 
-res = [5,6,7,8,9,10].my_map(&double)
+end
 
-p res
+p multiply_els([2, 4, 5])
