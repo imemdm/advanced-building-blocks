@@ -19,10 +19,8 @@ module Enumerable
 
   def my_select
     result = []
-    self.my_each_with_index do |el, i|
-      if yield(el)
-        result << self[i]
-      end
+    self.my_each do |el|
+      result << el if yield(el)
     end
     result
   end
