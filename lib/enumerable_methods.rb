@@ -49,13 +49,13 @@ module Enumerable
     result
   end
 
-  def my_none?
+  def my_none?(*args)
     result = true
     self.my_each do |el|
-      current = block_given? ? yield(el) : el
+      current = block_given? ? yield(el) : handle_args(el, args)
       if current
         result = false
-        return result
+        break
       end
     end
     result
@@ -64,21 +64,13 @@ module Enumerable
   def my_count(*args)
     count = 0
 
-    if args.empty? && !block_given?
-      self.my_each do |el|
+    self.my_each do |el|
+      if block_given?
+        count += 1 if yield(el)
+      elsif args[0]
+        count += 1 if args[0] == el
+      else
         count += 1
-      end
-    elsif block_given?
-      self.my_each do |el|
-        if yield(el)
-          count += 1
-        end
-      end
-    else
-      self.my_each do |el|
-        if el == args[0]
-          count += 1
-        end
       end
     end
     count
