@@ -25,12 +25,19 @@ module Enumerable
     result
   end
 
-  def my_all?
+  def my_all?(*args)
     result = true
     self.my_each do |el|
-      current = block_given? ? yield(el) : el
+      if block_given?
+        current = yield(el)
+      elsif args[0].instance_of? Regexp
+        current = args[0] === el
+      else
+        current = el
+      end
       unless current
         result = false
+        break
       end
     end
     result
