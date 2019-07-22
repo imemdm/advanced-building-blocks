@@ -85,24 +85,32 @@ module Enumerable
     result
   end
 
-  def my_inject(memo = nil)  
+  def my_inject(*args)
+    memo = args[0] && args[0].is_a?(Numeric) ? args[0] : nil
+
     self.my_each do |el|
       if memo.nil?
-        memo = 0
+        memo = el
+        next
       end
-      memo = yield(memo, el)
+      if block_given?
+        memo = yield(memo, el)
+      else
+        meth = args.size == 2 ? args[1] : args[0]
+        memo = memo.send(meth, el)
+      end
     end
     memo
   end
 
-  def multiply_els arr
-    arr.my_inject(1) do |sum, el|
-      sum * el
-    end
-  
+  # helper
+  def handle_args(el, args)
+    current = args[0] ? args[0] === el : el
   end
 end
 
-def handle_args(el, args)
-  current = args[0] ? args[0] === el : el
+
+
+def multiply_els arr
+  arr.my_inject(1, :*)
 end
