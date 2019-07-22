@@ -28,7 +28,7 @@ module Enumerable
   def my_all?(*args)
     result = true
     self.my_each do |el|
-      current = check_input?(el, args, bl=block_given?)
+      current = block_given? ? yield(el) : handle_args(el, args)
       unless current
         result = false
         break
@@ -37,13 +37,13 @@ module Enumerable
     result
   end
 
-  def my_any?
+  def my_any?(*args)
     result = false
     self.my_each do |el|
-      current = block_given? ? yield(el) : el
+      current = block_given? ? yield(el) : handle_args(el, args)
       if current
         result = true
-        return result
+        break
       end
     end
     result
@@ -111,14 +111,6 @@ module Enumerable
   end
 end
 
-def check_input?(el, args, bl)
-  current = nil
-  if bl
-    current = yield(el)
-  elsif args[0]
-    current = args[0] === el
-  else
-    current = el
-  end
-  current 
+def handle_args(el, args)
+  current = args[0] ? args[0] === el : el
 end
