@@ -79,9 +79,14 @@ module Enumerable
   def my_map(&block)
     result = []
 
-    self.my_each do |el|
-      result << block.call(el)
+    if block
+      self.my_each do |el|
+        result << block.call(el)
+      end
+    else
+      result = self.to_enum(:my_map)
     end
+    
     result
   end
 
