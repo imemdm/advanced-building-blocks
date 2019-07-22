@@ -28,13 +28,7 @@ module Enumerable
   def my_all?(*args)
     result = true
     self.my_each do |el|
-      if block_given?
-        current = yield(el)
-      elsif args[0].instance_of? Regexp
-        current = args[0] === el
-      else
-        current = el
-      end
+      current = check_input?(el, args, bl=block_given?)
       unless current
         result = false
         break
@@ -117,4 +111,14 @@ module Enumerable
   end
 end
 
-
+def check_input?(el, args, bl)
+  current = nil
+  if bl
+    current = yield(el)
+  elsif args[0]
+    current = args[0] === el
+  else
+    current = el
+  end
+  current 
+end
